@@ -41,7 +41,12 @@ public class OrderAgent {
                 break;
             case OrderEvent.ORDER_UPDATED_TYPE:
                 logger.info("Receive order update " + oe.status);
-                compensateOrder(oe.orderID,oe.quantity);
+                if (oe.status.equals(OrderEvent.ORDER_ON_HOLD_TYPE)) {
+                    compensateOrder(oe.orderID,oe.quantity);
+                } else {
+                    logger.info("Do future processing in case of order update");
+                }
+                    
                 break;
             default:
                 break;
@@ -68,13 +73,14 @@ public class OrderAgent {
             ve.voyageID = voyage.voyageID;
             ve.setType(VoyageEvent.TYPE_VOYAGE_ASSIGNED);
             ve.payload = voyageAssignedEvent;
-            logger.info("Send message to voyages " + ve.voyageID);
+           
             voyageEventProducer.sendEvent(ve.voyageID,ve);
         }
         return ve;
     }
  
     public void compensateOrder(String txid,long capacity) {
+        logger.info("Compensate on order " + txid);
         repo.cleanTransaction(txid,capacity);
     }
 }

@@ -1,6 +1,7 @@
 package ibm.eda.kc.voyagems.infra.events.voyage;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -12,13 +13,15 @@ import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 
 @ApplicationScoped
 public class VoyageEventProducer {
-    
+	Logger logger = Logger.getLogger(VoyageEventProducer.class.getName());
+
     @Channel("voyages")
 	public Emitter<VoyageEvent> eventProducer;
 
 
-    public void sendEvent(String key, VoyageEvent reeferEvent){
-		eventProducer.send(Message.of(reeferEvent).addMetadata(OutgoingKafkaRecordMetadata.<String>builder()
+    public void sendEvent(String key, VoyageEvent voyageEvent){
+		logger.info("Send voyage message --> " + voyageEvent.voyageID + " ts: " + voyageEvent.getTimestampMillis());
+		eventProducer.send(Message.of(voyageEvent).addMetadata(OutgoingKafkaRecordMetadata.<String>builder()
 			.withKey(key).build())
 			.withAck( () -> {
 				
