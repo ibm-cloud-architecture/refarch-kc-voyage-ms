@@ -1,0 +1,25 @@
+[
+   {
+      "voyageID": "V001",
+      "vesselID": "V01",
+      "capacity": 1000,
+      "type": "VO-20",
+      "status": "available",
+      "currentFreeCapacity": 1000,
+      "departurePort": "San Francisco",
+      "arrivalPort": "Shanghai",
+      "creationDate": "2022-03-30"
+   },
+   {
+      "voyageID": "V002",
+      "vesselID": "V02",
+      "capacity": 1500,
+      "type": "VO-20",
+      "status": "available",
+      "currentFreeCapacity": 1300,
+      "departurePort": "San Francisco",
+      "arrivalPort": "Hong Kong",
+      "creationDate": "2022-03-30"
+   }
+   
+]
