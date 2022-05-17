@@ -9,5 +9,7 @@ public interface VoyageRepository {
     public Voyage addVoyage(Voyage entity);
     public Voyage updateVoyage(Voyage entity);
     public Voyage getById(String key);
-    public Voyage  getVoyageForOrder(String transactionID,String origin,String destination);
+    public Voyage  getVoyageForOrder(String transactionID, String origin, String destination, long capacity);
+    public  Voyage getVoyagesForTransaction(String transactionID);
+    public void cleanTransaction(String transactionID, long capacity);
 }

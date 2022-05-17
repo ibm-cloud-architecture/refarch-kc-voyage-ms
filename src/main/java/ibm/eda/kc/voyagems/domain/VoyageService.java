@@ -20,21 +20,26 @@ public class VoyageService {
         this.repository = repo;
     }
 
-    public Voyage getReeferById(String id) {
+    public Voyage getVoyageById(String id) {
         return repository.getById(id);
     }
 
   
-    public List<Voyage> getAllReefers() {
+    public List<Voyage> getAllVoyages() {
         return repository.getAll();
     }
 
-    public Voyage saveReefer(Voyage r){
+    public Voyage saveVoyage(Voyage r){
         repository.addVoyage(r);
         return r;
     }
 
-    public Voyage updateFreezer(Voyage newFreezer) {
-        return repository.updateVoyage(newFreezer);
+    public Voyage updateVoyage(Voyage newVoyage) {
+        return repository.updateVoyage(newVoyage);
     }
+
+    public Voyage getAllVoyagesForTransaction(String txid) {
+        return repository.getVoyagesForTransaction(txid);
+    }
+
 }

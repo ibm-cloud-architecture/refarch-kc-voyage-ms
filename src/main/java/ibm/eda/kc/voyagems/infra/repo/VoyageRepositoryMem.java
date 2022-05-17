@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,12 +29,12 @@ public class VoyageRepositoryMem implements VoyageRepository {
             throw new IllegalAccessError("file not found for voyage json");
         try {
             List<Voyage> currentDefinitions = mapper.readValue(is, mapper.getTypeFactory().constructCollectionType(List.class, Voyage.class));
-            currentDefinitions.stream().forEach( (t) -> { 
-                voyages.put(t.voyageID,t);
-                if (t.departurePort != null) {
-                    if (byDeparturePort.get(t.departurePort) == null) 
-                        byDeparturePort.put(t.departurePort, new ArrayList<Voyage>());
-                    byDeparturePort.get(t.departurePort).add(t);
+            currentDefinitions.stream().forEach( (v) -> { 
+                voyages.put(v.voyageID,v);
+                if (v.departurePort != null) {
+                    if (byDeparturePort.get(v.departurePort) == null) 
+                        byDeparturePort.put(v.departurePort, new ArrayList<Voyage>());
+                    byDeparturePort.get(v.departurePort).add(v);
                 }
                 
             });
@@ -48,6 +49,9 @@ public class VoyageRepositoryMem implements VoyageRepository {
     }
 
     public Voyage addVoyage(Voyage entity) {
+        if (entity.voyageID == null) {
+            entity.voyageID = UUID.randomUUID().toString();
+        }
         voyages.put(entity.voyageID, entity);
         return entity;
     }
@@ -66,22 +70,31 @@ public class VoyageRepositoryMem implements VoyageRepository {
      * Search voyages from departure location that has support capacity
      * @return list of freezers support this expected catacity and at the expected location
      */
-    public  Voyage  getVoyageForOrder(String transactionID,String departure,String destination) {
+    public  Voyage  getVoyageForOrder(String transactionID,
+                                String departure,
+                                String destination,
+                                long expectedCapacity) {
         List<Voyage> voyages = byDeparturePort.get(departure);
         if (voyages == null) return null;
         for (Voyage v : voyages) {
             if (v.arrivalPort.equals(destination)) {
+                // add capacity management
+                v.currentFreeCapacity -= expectedCapacity;
                 return v;
             }
         }
         return null;
     }
 
-    public  Voyage getVoyageForTransaction(String transactionID) {
+    public  Voyage getVoyagesForTransaction(String transactionID) {
         return currentOrderBacklog.get(transactionID);
     }
 
-    public void cleanTransaction(String transactionID) {
+    public void cleanTransaction(String transactionID , long capacity) {
+        Voyage allocatedVoyage = this.currentOrderBacklog.get(transactionID);
+        if (allocatedVoyage != null) {
+                allocatedVoyage.currentFreeCapacity+=capacity;
+        }
         this.currentOrderBacklog.remove(transactionID);
     }
 }

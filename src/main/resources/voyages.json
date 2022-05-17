@@ -20,6 +20,17 @@
       "departurePort": "San Francisco",
       "arrivalPort": "Hong Kong",
       "creationDate": "2022-03-30"
+   },
+   {
+      "voyageID": "V005",
+      "vesselID": "V06",
+      "capacity": 1500,
+      "type": "VO-33",
+      "status": "available",
+      "currentFreeCapacity": 1300,
+      "departurePort": "Boston",
+      "arrivalPort": "Shanghai",
+      "creationDate": "2022-03-30"
    }
    
 ]

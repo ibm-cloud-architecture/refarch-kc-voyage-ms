@@ -29,9 +29,11 @@ public class TestProcessOrderCreatedEvent {
 
     @Test
     public void shouldHaveOneVoyage(){
-        Voyage v = repo.getVoyageForOrder("T01", "San Francisco", "Shanghai");
+        Voyage v = repo.getVoyageForOrder("T01", "San Francisco", "Shanghai",100);
         Assertions.assertNotNull(v);
         Assertions.assertEquals("V001", v.voyageID);
+        v = repo.getVoyageForOrder("T01", "Boston", "Shanghai",100);
+        Assertions.assertEquals("V005", v.voyageID);
     }
 
     @Test

@@ -30,4 +30,11 @@ public class OrderEvent extends EventBase {
 
     public OrderEvent() {
     }
+
+    public OrderEvent( String aType, OrderVariablePayload payload) {
+        this.payload = payload;
+        this.type = aType;
+        this.timestampMillis = new Date().getTime();
+        this.version = DEFAULT_VERSION;
+    }
 }

@@ -40,7 +40,8 @@ public class OrderAgent {
                 processOrderCreatedEvent(oe);
                 break;
             case OrderEvent.ORDER_UPDATED_TYPE:
-                logger.info("Receive order update");
+                logger.info("Receive order update " + oe.status);
+                compensateOrder(oe.orderID,oe.quantity);
                 break;
             default:
                 break;
@@ -56,10 +57,12 @@ public class OrderAgent {
         OrderCreatedEvent oce = (OrderCreatedEvent)oe.payload;
         Voyage voyage = repo.getVoyageForOrder(oe.orderID, 
                                 oce.pickupCity, 
-                                oce.destinationCity);
+                                oce.destinationCity,
+                                oe.quantity);
         VoyageEvent ve = new VoyageEvent();
         if (voyage == null) {
             // normally do nothing
+            logger.info("No voyage found for " + oce.pickupCity);
         } else {
             VoyageAllocated voyageAssignedEvent = new VoyageAllocated(oe.orderID);
             ve.voyageID = voyage.voyageID;
@@ -71,4 +74,7 @@ public class OrderAgent {
         return ve;
     }
  
+    public void compensateOrder(String txid,long capacity) {
+        repo.cleanTransaction(txid,capacity);
+    }
 }
